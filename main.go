@@ -24,7 +24,7 @@ type CsvLine struct {
 
 func main() {
 	http.HandleFunc("/", indexHandler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
 
 func indexHandler(w http.ResponseWriter, req *http.Request) {
