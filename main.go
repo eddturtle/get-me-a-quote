@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+    "regexp"
 )
 
 const (
@@ -57,7 +58,7 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 		result, err = xml.Marshal(ResponseContent{Text: quote[4]})
 	} else {
 		// PLAIN
-		result = []byte(quote[4])
+		result = []byte(removeNonAlphaNumeric(quote[4]))
 	}
 
 	if err != nil {
@@ -109,4 +110,9 @@ func getAllQuotes() ([][]string, error) {
 	}
 
 	return lines, nil
+}
+
+func removeNonAlphaNumeric(text string) string {
+	reg, _ := regexp.Compile("[^-a-zA-Z0-9,. ]+")
+    return reg.ReplaceAllString(text, "")
 }
