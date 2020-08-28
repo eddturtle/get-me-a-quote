@@ -8,7 +8,7 @@ Quotes are sourced from this list: https://github.com/umbrae/reddit-top-2.5-mill
 
 API Built by Edd Turtle ([designedbyaturtle.co.uk](https://www.designedbyaturtle.co.uk))
 
-Served at: [https://get-me-a-quote.herokuapp.com](https://get-me-a-quote.herokuapp.com/)
+Served at: [getmeaquote.designedbyaturtle.com](http://getmeaquote.designedbyaturtle.com/) (or [https://get-me-a-quote.herokuapp.com](https://get-me-a-quote.herokuapp.com/) if you need https)
 
 ---
 
