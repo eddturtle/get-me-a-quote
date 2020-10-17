@@ -1,6 +1,6 @@
 {
-	"ImportPath": "sandbox/quote-api",
-	"GoVersion": "go1.8",
-	"GodepVersion": "v79",
+	"ImportPath": "get-me-a-quote",
+	"GoVersion": "go1.10",
+	"GodepVersion": "v80",
 	"Deps": []
 }

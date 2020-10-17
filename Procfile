@@ -1,1 +1,1 @@
-web: quote-api
+web: ./quote-api
