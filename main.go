@@ -1,11 +1,9 @@
-//
-// Tiny API to work as a random 'famous quote' generator. Each time it's called you will get a different quote.
+// Get me a Quote: A tiny API to work as a random 'famous quote' generator. Each time it's called you will get a different quote.
 // Built as a way to keep periodic messages, like emails and slack notifications from cron jobs interesting.
 //
 // Quotes are sourced from this list: https://github.com/umbrae/reddit-top-2.5-million/blob/master/data/quotes.csv
 //
-// API Built by Edd Turtle (designedbyaturtle.co.uk)
-//
+// API Built by Edd Turtle (designedbyaturtle.com)
 
 package main
 
@@ -17,6 +15,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -28,13 +27,21 @@ type ResponseContent struct {
 	Text string `json:"text",xml:"text"`
 }
 
+var loadQuotesOnce sync.Once
+var allQuotes [][]string
+
 func main() {
 	// Setup
-	fmt.Println("Starting Server...")
 	rand.Seed(time.Now().UnixNano())
+	// Routes
 	http.HandleFunc("/", indexHandler)
 	// Run
-	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Println("Starting HTTP Server on port " + port)
+	http.ListenAndServe(":"+port, nil)
 }
 
 func indexHandler(w http.ResponseWriter, req *http.Request) {
@@ -46,6 +53,7 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 	quote, err := getQuote()
 	if err != nil {
 		// TODO Show 500
+		panic(err)
 	}
 
 	var result []byte
@@ -62,6 +70,7 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		// TODO Show 500
+		panic(err)
 	}
 
 	fmt.Fprintf(w, "%s", result)
@@ -80,12 +89,16 @@ func getReponseContentType(req *http.Request) (returnType string) {
 }
 
 func getQuote() ([]string, error) {
-	quotes, err := getAllQuotes()
-	if err != nil {
-		return nil, err
-	}
-	randomNum := getRandomNum(len(quotes))
-	return quotes[randomNum], nil
+
+	loadQuotesOnce.Do(func() {
+		var err error
+		allQuotes, err = getAllQuotes()
+		if err != nil {
+			panic(err)
+		}
+	})
+	randomNum := getRandomNum(len(allQuotes))
+	return allQuotes[randomNum], nil
 }
 
 func getRandomNum(max int) int {
